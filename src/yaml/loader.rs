@@ -1,9 +1,5 @@
 use linked_hash_map_rs::LinkedHashMap;
-use yaml_rust::{
-    parser::{MarkedEventReceiver, Parser},
-    scanner::Marker,
-    Event, ScanError,
-};
+use yaml_rust::{parser::MarkedEventReceiver, scanner::Marker, Event, ScanError};
 
 use super::model::*;
 
@@ -43,9 +39,10 @@ impl Loader {
 
 impl MarkedEventReceiver for Loader {
     fn on_event(&mut self, ev: yaml_rust::Event, mark: Marker) {
-        println!("{:?}", ev);
+        // println!("{:?}", ev);
         let state = self.stack.pop().expect("Invalid state stack!");
         if let State::Error(_) = state {
+            self.stack.push(state);
             return;
         }
 

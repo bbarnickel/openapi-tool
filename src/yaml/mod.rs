@@ -1,9 +1,12 @@
 use yaml_rust::parser::Parser;
 
-use self::{model::Node, loader::{Loader, LoaderError}};
+use self::{
+    loader::{Loader, LoaderError},
+    model::Node,
+};
 
-mod model;
 mod loader;
+mod model;
 
 pub(crate) fn parse_yaml<S: AsRef<str>>(yaml: S) -> Result<Node, LoaderError> {
     let mut parser = Parser::new(yaml.as_ref().chars());
@@ -68,5 +71,20 @@ mod test_parse_yaml {
                 .all(|(n, e)| n.value == e);
             assert!(all_eq);
         }
+    }
+
+    #[test]
+    fn test_double_key() {
+        let node = parse_yaml(
+            r#"test:
+    name: Hello
+    name:
+        and: more
+        some:
+        - list
+        - items
+"#,
+        );
+        assert!(matches!(node, Err(LoaderError::DuplicateKey(_))));
     }
 }
