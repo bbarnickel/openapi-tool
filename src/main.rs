@@ -1,3 +1,4 @@
+mod model;
 mod yaml;
 
 fn main() {
